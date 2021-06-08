@@ -11,6 +11,10 @@
 #   (optional) maximum connections to rsync server
 #   Defaults to 5
 #
+# [*rsync_use_xinetd*]
+#   (optional) indicate if xinetd should be used to manage rsync service
+#   Defaults to True.
+#
 # == Dependencies
 #
 #   Class['swift']
@@ -27,7 +31,8 @@
 #
 class swift::ringserver(
   $local_net_ip,
-  $max_connections = 5
+  $max_connections = 5,
+  $rsync_use_xinetd = true
 ) {
 
   include swift::deps
@@ -35,7 +40,7 @@ class swift::ringserver(
 
   if !defined(Class['rsync::server']) {
     class { 'rsync::server':
-      use_xinetd => true,
+      use_xinetd => $rsync_use_xinetd,
       address    => $local_net_ip,
       use_chroot => 'no',
     }
